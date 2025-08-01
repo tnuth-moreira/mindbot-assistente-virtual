@@ -1,15 +1,16 @@
-import express from "express";
-
-import emojis from "./emojis.js";
-
+const express = require('express');
+const axios = require('axios');
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  res.json({
-    message: "API - 👋🌎🌍🌏",
-  });
+router.post('/analisar', async (req, res) => {
+try {
+  const { mensagem } = req.body;
+  const resposta = await axios.post('http://localhost:5000/sentimento')
+  res.json(resposta.data);
+  } catch (error) {
+    console.error('Erro ao chamar API Flash:', error.message);
+    res.status(500).json({ error: 'Erro ao analisar sentimmento'});
+  }
 });
 
-router.use("/emojis", emojis);
-
-export default router;
+module.exports= router;
