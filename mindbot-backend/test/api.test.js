@@ -1,24 +1,17 @@
 import request from "supertest";
-import { describe, it } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import app from "../src/app.js";
 
-describe("GET /api/v1", () => {
-  it("responds with a json message", () =>
-    request(app)
-      .get("/api/v1")
-      .set("Accept", "application/json")
-      .expect("Content-Type", /json/)
-      .expect(200, {
-        message: "API - 👋🌎🌍🌏",
-      }));
-});
+describe("POST /api/v1/analisar", () => {
+  it("deve retornar o sentimento da mensagem", async () => {
+    const response = await request(app)
+      .post("/api/v1/analisar")
+      .send({ mensagem: "Estou muito feliz hoje!" })
+      .set("Accept", "application/json");
 
-describe("GET /api/v1/emojis", () => {
-  it("responds with a json message", () =>
-    request(app)
-      .get("/api/v1/emojis")
-      .set("Accept", "application/json")
-      .expect("Content-Type", /json/)
-      .expect(200, ["😀", "😳", "🙄"]));
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("sentimento");
+    expect(["Positivo", "Negativo", "Neutro"]).toContain(response.body.sentimento);
+  });
 });

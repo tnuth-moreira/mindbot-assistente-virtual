@@ -1,18 +1,18 @@
-import app from "./app.js";
-import { env } from "./env.js";
+import express from 'express';
+import apiRoutes from './api/index.js';
 
-const server = app.listen(env.PORT, () => {
-  /* eslint-disable no-console */
-  console.log(`Listening: http://localhost:${env.PORT}`);
-  /* eslint-enable no-console */
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(express.json());
+
+app.get('/', (req, res) => {
+  res.send('Bem-vindo à API MindBot!');
 });
 
-server.on("error", (err) => {
-  if (err.code === "EADDRINUSE") {
-    console.error(`Port ${env.PORT} is already in use. Please choose another port or stop the process using it.`);
-  }
-  else {
-    console.error("Failed to start server:", err);
-  }
-  process.exit(1);
-});
+app.use('/api', apiRoutes);
+
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
+}
+);

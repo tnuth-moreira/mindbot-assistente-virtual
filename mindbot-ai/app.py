@@ -1,7 +1,10 @@
 from flask import Flask, request, jsonify
 from textblob import TextBlob
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
+
 
 def analisar_sentimento(texto):
     blob = TextBlob(texto)
@@ -14,10 +17,13 @@ def analisar_sentimento(texto):
     
 @app.route('/analisar', methods=['POST'])
 def detectar_sentimento():
-    data = request.json
+    data = request.get_json()
     mensagem = data.get('mensagem', '')
+    if not mensagem:
+        return jsonify({'erro': 'Mensagem vazia'}), 400
+
     sentimento = analisar_sentimento(mensagem)
-    return jsonify({'sentimento': sentimento})
+    return jsonify({'sentimento': sentimento}), 200
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(port=5001)

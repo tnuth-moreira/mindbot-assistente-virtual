@@ -1,16 +1,8 @@
-import { env } from "./env.js";
-
 export function notFound(req, res, next) {
-  res.status(404);
-  const error = new Error(`🔍 - Not Found - ${req.originalUrl}`);
-  next(error);
+  res.status(404).json({ message: "🔍 - Not Found" });
 }
 
-export function errorHandler(err, req, res, _next) {
-  const statusCode = res.statusCode !== 200 ? res.statusCode : 500;
-  res.status(statusCode);
-  res.json({
-    message: err.message,
-    stack: env.NODE_ENV === "production" ? "🥞" : err.stack,
-  });
+export function errorHandler(err, req, res, next) {
+  console.error(err.stack);
+  res.status(500).json({ message: "🚨 Internal Server Error" });
 }
